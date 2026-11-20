@@ -15,7 +15,7 @@ st.set_page_config(
 def load_data():
     import os
 
-    BASE_DIR = os.path.dirname(os.path.abspath(_file_))
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     DB_PATH = os.path.join(BASE_DIR, "bacterial_cellulose.db")
 
     conn = sqlite3.connect(DB_PATH)
