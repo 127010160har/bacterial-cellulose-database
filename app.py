@@ -282,75 +282,158 @@ st.download_button(
 st.caption("Bacterial Cellulose Production Database | Research analytics dashboard")
 # ---------- BACTERIAL CELLULOSE APPLICATIONS ----------
 st.divider()
-st.title("🧪 Potential Applications of Bacterial Cellulose")
+st.title("🧪 Bacterial Cellulose Applications")
 
 st.write(
-    "Explore potential uses of bacterial cellulose in food, "
-    "medical, drug delivery, cosmetics and packaging fields."
+    "Select an application to explore bacterial strains reported "
+    "in research and their roles in bacterial cellulose applications."
 )
 
-applications = {
+# Research examples: these are literature strains, not automatically
+# strains present in the user's production database.
+application_research = {
     "Food": {
-        "Examples": "Nata de coco, food texture and fibre applications.",
-        "Description": "Bacterial cellulose can be used as a food material "
-                       "because of its water-holding capacity and texture."
+        "description": "Production of edible bacterial cellulose, including nata de coco.",
+        "examples": [
+            {
+                "Bacterial Strain": "Komagataeibacter nataicola Q2",
+                "Research Role": "Bacterial cellulose production using coconut water for nata de coco research.",
+                "Evidence": "Research study"
+            },
+            {
+                "Bacterial Strain": "Komagataeibacter nataicola Y19",
+                "Research Role": "Nata de coco production using fermented coconut water.",
+                "Evidence": "Research study"
+            }
+        ]
     },
+
     "Medical / Biomedical": {
-        "Examples": "Wound dressings, burn dressings and artificial-skin research.",
-        "Description": "Bacterial cellulose is studied as a material for "
-                       "wound-care and other biomedical applications."
+        "description": "Bacterial cellulose membranes investigated for wound and burn dressings.",
+        "examples": [
+            {
+                "Bacterial Strain": "Komagataeibacter xylinus DSM 14666",
+                "Research Role": "Used to produce bacterial cellulose wound-dressing materials.",
+                "Evidence": "Research study"
+            }
+        ]
     },
+
     "Drug Delivery": {
-        "Examples": "Cellulose membranes and drug-loaded cellulose materials.",
-        "Description": "Modified bacterial cellulose materials are being "
-                       "investigated for controlled drug delivery."
+        "description": "Bacterial cellulose membranes investigated as carriers for topical delivery of active compounds.",
+        "examples": [
+            {
+                "Bacterial Strain": "Gluconacetobacter sacchari",
+                "Research Role": "Bacterial cellulose membranes investigated as support materials for topical delivery.",
+                "Evidence": "Research study"
+            }
+        ]
     },
+
     "Cosmetics": {
-        "Examples": "Facial masks and moisture-retaining cosmetic materials.",
-        "Description": "Bacterial cellulose can be used in cosmetic "
-                       "formulations because it can retain moisture."
+        "description": "Bacterial cellulose investigated for facial masks, skin hydration and cosmetic delivery systems.",
+        "examples": [
+            {
+                "Bacterial Strain": "Acetobacter xylinum",
+                "Research Role": "Used to produce bacterial cellulose facial masks evaluated for skin hydration.",
+                "Evidence": "Human study"
+            },
+            {
+                "Bacterial Strain": "Gluconacetobacter sacchari",
+                "Research Role": "Bacterial cellulose membranes investigated for topical skin applications.",
+                "Evidence": "Research study"
+            }
+        ]
     },
+
     "Packaging": {
-        "Examples": "Biodegradable films and food-packaging materials.",
-        "Description": "Bacterial cellulose is investigated as a renewable "
-                       "material for biodegradable packaging."
+        "description": "Bacterial cellulose investigated as a renewable material for biodegradable films and packaging.",
+        "examples": []
     }
 }
 
 selected_application = st.selectbox(
     "Select an application area",
-    list(applications.keys())
+    list(application_research.keys()),
+    key="application_selector"
 )
+
+selected_data = application_research[selected_application]
 
 st.subheader(f"🔬 {selected_application}")
 
-st.write("*Examples:*")
-st.write(applications[selected_application]["Examples"])
+st.write("*Potential application:*")
+st.write(selected_data["description"])
 
-st.write("*Potential use:*")
-st.write(applications[selected_application]["Description"])
+st.divider()
+st.subheader("🦠 Bacterial Strains Reported in Application Research")
 
-st.info(
-    "Important: These are potential applications of bacterial cellulose "
-    "as a material. They do not mean that every bacterial strain in this "
-    "database is approved or proven for medical or food use."
-)
+if selected_data["examples"]:
+    research_df = pd.DataFrame(selected_data["examples"])
 
-st.subheader("🦠 Bacterial Strains in This Database")
+    # Check whether each literature strain is listed in the user's database.
+    database_strains = (
+        df["Bacterial_Strain"]
+        .dropna()
+        .astype(str)
+        .str.strip()
+        .tolist()
+        if "Bacterial_Strain" in df.columns
+        else []
+    )
 
-if "Bacterial_Strain" in df.columns:
-    strain_list = sorted(
-        df["Bacterial_Strain"].dropna().astype(str).unique()
+    database_names = {name.casefold() for name in database_strains}
+
+    research_df["Present in Your Database"] = research_df[
+        "Bacterial Strain"
+    ].apply(
+        lambda name: (
+            "Yes"
+            if name.casefold() in database_names
+            else "No"
+        )
     )
 
     st.dataframe(
-        pd.DataFrame({
-            "Bacterial Strain": strain_list,
-            "Demonstrated Role": [
-                "Bacterial cellulose production; specific end-use "
-                "not established by the production data."
-                for strain in strain_list
-            ]
-        }),
-        use_container_width=True
+        research_df,
+        use_container_width=True,
+        hide_index=True
     )
+else:
+    st.info(
+        "No specific bacterial strain has been added to this "
+        "application category yet. More strain-specific literature "
+        "research is needed."
+    )
+
+st.divider()
+st.subheader("📚 Strains Available in Your Production Database")
+
+if "Bacterial_Strain" in df.columns:
+    database_df = pd.DataFrame({
+        "Bacterial Strain": sorted(
+            df["Bacterial_Strain"]
+            .dropna()
+            .astype(str)
+            .unique()
+        )
+    })
+
+    st.dataframe(
+        database_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+st.info(
+    "Important: Literature strains shown above are examples from "
+    "published research. A strain being reported for an application "
+    "does not prove that every strain in your database has the same "
+    "application. Food, medical and cosmetic use also requires "
+    "appropriate safety and regulatory evaluation."
+)
+
+st.caption(
+    "Application examples are based on published research. "
+    "Please consult the references before drawing conclusions."
+)
