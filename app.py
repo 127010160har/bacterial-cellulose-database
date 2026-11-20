@@ -366,71 +366,54 @@ st.write("*Potential application:*")
 st.write(selected_data["description"])
 
 st.divider()
-st.subheader("🦠 Bacterial Strains Reported in Application Research")
+st.subheader("🦠 Bacteria Reported in Application Research")
 
 if selected_data["examples"]:
+
     research_df = pd.DataFrame(selected_data["examples"])
 
-    # Check whether each literature strain is listed in the user's database.
-    database_strains = (
-        df["Bacterial_Strain"]
-        .dropna()
-        .astype(str)
-        .str.strip()
-        .tolist()
-        if "Bacterial_Strain" in df.columns
-        else []
-    )
+    # Display bacterial names without strain identifiers
+    species_names = {
+        "Komagataeibacter nataicola Q2":
+            "Komagataeibacter nataicola",
 
-    database_names = {name.casefold() for name in database_strains}
+        "Komagataeibacter nataicola Y19":
+            "Komagataeibacter nataicola",
 
-    research_df["Present in Your Database"] = research_df[
+        "Komagataeibacter xylinus DSM 14666":
+            "Komagataeibacter xylinus",
+
+        "Gluconacetobacter sacchari":
+            "Gluconacetobacter sacchari",
+
+        "Acetobacter xylinum":
+            "Acetobacter xylinum"
+    }
+
+    research_df["Bacterial Name"] = research_df[
         "Bacterial Strain"
-    ].apply(
-        lambda name: (
-            "Yes"
-            if name.casefold() in database_names
-            else "No"
-        )
-    )
+    ].map(species_names)
+
+    display_df = research_df[
+        ["Bacterial Name", "Research Role", "Evidence"]
+    ]
 
     st.dataframe(
-        research_df,
+        display_df,
         use_container_width=True,
         hide_index=True
     )
+
 else:
     st.info(
-        "No specific bacterial strain has been added to this "
-        "application category yet. More strain-specific literature "
-        "research is needed."
-    )
-
-st.divider()
-st.subheader("📚 Strains Available in Your Production Database")
-
-if "Bacterial_Strain" in df.columns:
-    database_df = pd.DataFrame({
-        "Bacterial Strain": sorted(
-            df["Bacterial_Strain"]
-            .dropna()
-            .astype(str)
-            .unique()
-        )
-    })
-
-    st.dataframe(
-        database_df,
-        use_container_width=True,
-        hide_index=True
+        "No specific bacterial examples have been added "
+        "for this application yet."
     )
 
 st.info(
-    "Important: Literature strains shown above are examples from "
-    "published research. A strain being reported for an application "
-    "does not prove that every strain in your database has the same "
-    "application. Food, medical and cosmetic use also requires "
-    "appropriate safety and regulatory evaluation."
+    "Note: These bacteria are reported in application research. "
+    "Their suitability for a particular application requires "
+    "separate experimental and safety evaluation."
 )
 
 st.caption(
