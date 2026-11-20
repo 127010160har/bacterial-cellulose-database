@@ -13,15 +13,17 @@ st.set_page_config(
 # ---------- DATABASE ----------
 @st.cache_data
 def load_data():
-   import os
+    import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(_file_))
-DB_PATH = os.path.join(BASE_DIR, "bacterial_cellulose.db")
+    BASE_DIR = os.path.dirname(os.path.abspath(_file_))
+    DB_PATH = os.path.join(BASE_DIR, "bacterial_cellulose.db")
 
-conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH)
+
     data = pd.read_sql_query(
         "SELECT * FROM cellulose_production", conn
     )
+
     conn.close()
     return data
 
