@@ -280,3 +280,77 @@ st.download_button(
 )
 
 st.caption("Bacterial Cellulose Production Database | Research analytics dashboard")
+# ---------- BACTERIAL CELLULOSE APPLICATIONS ----------
+st.divider()
+st.title("🧪 Potential Applications of Bacterial Cellulose")
+
+st.write(
+    "Explore potential uses of bacterial cellulose in food, "
+    "medical, drug delivery, cosmetics and packaging fields."
+)
+
+applications = {
+    "Food": {
+        "Examples": "Nata de coco, food texture and fibre applications.",
+        "Description": "Bacterial cellulose can be used as a food material "
+                       "because of its water-holding capacity and texture."
+    },
+    "Medical / Biomedical": {
+        "Examples": "Wound dressings, burn dressings and artificial-skin research.",
+        "Description": "Bacterial cellulose is studied as a material for "
+                       "wound-care and other biomedical applications."
+    },
+    "Drug Delivery": {
+        "Examples": "Cellulose membranes and drug-loaded cellulose materials.",
+        "Description": "Modified bacterial cellulose materials are being "
+                       "investigated for controlled drug delivery."
+    },
+    "Cosmetics": {
+        "Examples": "Facial masks and moisture-retaining cosmetic materials.",
+        "Description": "Bacterial cellulose can be used in cosmetic "
+                       "formulations because it can retain moisture."
+    },
+    "Packaging": {
+        "Examples": "Biodegradable films and food-packaging materials.",
+        "Description": "Bacterial cellulose is investigated as a renewable "
+                       "material for biodegradable packaging."
+    }
+}
+
+selected_application = st.selectbox(
+    "Select an application area",
+    list(applications.keys())
+)
+
+st.subheader(f"🔬 {selected_application}")
+
+st.write("*Examples:*")
+st.write(applications[selected_application]["Examples"])
+
+st.write("*Potential use:*")
+st.write(applications[selected_application]["Description"])
+
+st.info(
+    "Important: These are potential applications of bacterial cellulose "
+    "as a material. They do not mean that every bacterial strain in this "
+    "database is approved or proven for medical or food use."
+)
+
+st.subheader("🦠 Bacterial Strains in This Database")
+
+if "Bacterial_Strain" in df.columns:
+    strain_list = sorted(
+        df["Bacterial_Strain"].dropna().astype(str).unique()
+    )
+
+    st.dataframe(
+        pd.DataFrame({
+            "Bacterial Strain": strain_list,
+            "Demonstrated Role": [
+                "Bacterial cellulose production; specific end-use "
+                "not established by the production data."
+                for strain in strain_list
+            ]
+        }),
+        use_container_width=True
+    )
