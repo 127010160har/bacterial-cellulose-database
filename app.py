@@ -123,11 +123,12 @@ st.divider()
 # ---------- GRAPHS ----------
 st.subheader("📈 Interactive Research Visualizations")
 
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "Yield Analysis",
     "Culture Conditions",
     "Material Properties",
-    "Research Trends"
+    "Research Trends",
+    "🧪 Laboratory Calculator"
 ])
 
 with tab1:
@@ -265,6 +266,167 @@ with tab4:
             st.info("Year information is not available.")
     else:
         st.info("Year column is not available.")
+        
+# ---------- LABORATORY CALCULATOR ----------
+
+with tab5:
+
+    st.header("🧪 Bacterial Cellulose Laboratory Calculator")
+
+    st.write(
+        "Calculate important parameters used in "
+        "bacterial cellulose production and characterization."
+    )
+
+    calculator = st.selectbox(
+        "Select Calculation",
+        [
+            "BC Production Yield",
+            "Production Productivity",
+            "Water Holding Capacity (WHC)",
+            "Moisture Content",
+            "Culture Medium Preparation",
+            "Inoculum Volume"
+        ]
+    )
+
+    st.divider()
+
+    # 1. BC PRODUCTION YIELD
+    if calculator == "BC Production Yield":
+
+        st.subheader("BC Production Yield")
+
+        dry_weight = st.number_input(
+            "Dry BC weight (g)", min_value=0.0, value=2.0
+        )
+
+        volume = st.number_input(
+            "Culture volume (L)", min_value=0.0, value=0.5
+        )
+
+        if st.button("Calculate Yield"):
+            if volume > 0:
+                result = dry_weight / volume
+                st.success(f"BC Yield = {result:.2f} g/L")
+            else:
+                st.error("Culture volume must be greater than zero.")
+
+    # 2. PRODUCTIVITY
+    elif calculator == "Production Productivity":
+
+        st.subheader("Production Productivity")
+
+        dry_weight = st.number_input(
+            "Dry BC weight (g)", min_value=0.0, value=2.0
+        )
+
+        volume = st.number_input(
+            "Culture volume (L)", min_value=0.0, value=0.5
+        )
+
+        days = st.number_input(
+            "Production time (days)", min_value=0.0, value=4.0
+        )
+
+        if st.button("Calculate Productivity"):
+            if volume > 0 and days > 0:
+                result = dry_weight / (volume * days)
+                st.success(
+                    f"Productivity = {result:.2f} g/L/day"
+                )
+            else:
+                st.error("Volume and time must be greater than zero.")
+
+    # 3. WATER HOLDING CAPACITY
+    elif calculator == "Water Holding Capacity (WHC)":
+
+        st.subheader("Water Holding Capacity")
+
+        wet = st.number_input(
+            "Wet BC weight (g)", min_value=0.0, value=10.0
+        )
+
+        dry = st.number_input(
+            "Dry BC weight (g)", min_value=0.0, value=1.0
+        )
+
+        if st.button("Calculate WHC"):
+            if dry > 0 and wet >= dry:
+                result = ((wet - dry) / dry) * 100
+                st.success(f"Water Holding Capacity = {result:.2f}%")
+            else:
+                st.error("Wet weight must be greater than dry weight, and dry weight must be positive.")
+
+    # 4. MOISTURE CONTENT
+    elif calculator == "Moisture Content":
+
+        st.subheader("Moisture Content")
+
+        wet = st.number_input(
+            "Wet weight (g)", min_value=0.0, value=10.0
+        )
+
+        dry = st.number_input(
+            "Dry weight (g)", min_value=0.0, value=1.0
+        )
+
+        if st.button("Calculate Moisture"):
+            if wet > 0 and wet >= dry:
+                result = ((wet - dry) / wet) * 100
+                st.success(f"Moisture Content = {result:.2f}%")
+            else:
+                st.error("Wet weight must be positive and at least equal to dry weight.")
+
+    # 5. CULTURE MEDIUM PREPARATION
+    elif calculator == "Culture Medium Preparation":
+
+        st.subheader("Culture Medium Preparation")
+
+        medium_volume = st.number_input(
+            "Required medium volume (mL)",
+            min_value=0.0,
+            value=500.0
+        )
+
+        concentration = st.number_input(
+            "Ingredient concentration (g/L)",
+            min_value=0.0,
+            value=10.0
+        )
+
+        if st.button("Calculate Medium Quantity"):
+            result = (medium_volume / 1000) * concentration
+
+            st.success(
+                f"Required ingredient quantity = {result:.2f} g"
+            )
+
+    # 6. INOCULUM VOLUME
+    elif calculator == "Inoculum Volume":
+
+        st.subheader("Inoculum Volume Calculator")
+
+        culture_volume = st.number_input(
+            "Working culture volume (mL)",
+            min_value=0.0,
+            value=100.0
+        )
+
+        inoculum_percent = st.number_input(
+            "Inoculum percentage (%)",
+            min_value=0.0,
+            max_value=100.0,
+            value=10.0
+        )
+
+        if st.button("Calculate Inoculum"):
+            result = culture_volume * inoculum_percent / 100
+
+            st.success(
+                f"Required inoculum volume = {result:.2f} mL"
+            )
+
 
 # ---------- DATA TABLE ----------
 st.divider()
